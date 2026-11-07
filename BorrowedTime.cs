@@ -1,32 +1,47 @@
-using UnityEngine;
+using CharmCore.Api;
+using CharmPocketWatch.Domain;
 
 namespace CharmPocketWatch
 {
 	/// <summary>
-	/// Borrowed Time: a lethal hit leaves you with 1 HP and a moment of invulnerability.
-	/// TODO: implement the power. Rules every charm follows:
-	/// - Only act while <c>Charm.IsActive</c> (the valuable is in the local player's pocket and everything is on).
-	/// - Call <c>Charm.TryUse()</c> at the moment the power triggers and apply the effect only when it returns true:
-	///   that starts the cooldown and wears the valuable. For wear over time use <c>Charm.TryUse(percent)</c> or <c>Charm.Wear(percent)</c>.
-	/// - Write debug detail with <c>Charm.LogDebug(...)</c>, never with the plugin logger (a test enforces it).
+	/// Borrowed Time: a lethal hit leaves the owner with <c>SurviveHp</c> health and a short invulnerability.
+	/// CharmCore owns the hook on <c>PlayerHealth.Hurt</c> and only offers hits the game would really apply, so this class
+	/// registers one handler in the "last-chance save" slot (priority 10: after cancelling effects, before damage reduction).
 	/// </summary>
-	internal sealed class BorrowedTime : MonoBehaviour
+	internal sealed class BorrowedTime
 	{
-		internal PocketWatchCharm Charm { get; set; } = null!;
+		/// <summary>The "last-chance save" priority suggested by <see cref="CharmsApi.OnPlayerHurting"/>.</summary>
+		internal const int Priority = 10;
 
-		private void Update()
+		private readonly PocketWatchCharm charm;
+
+		private BorrowedTime(PocketWatchCharm charm)
 		{
-			if (Charm == null || !Charm.IsActive)
+			this.charm = charm;
+		}
+
+		/// <summary>Registers the hurt handler once; call it after <see cref="CharmsApi.Register"/>.</summary>
+		internal static void Register(PocketWatchCharm charm)
+		{
+			BorrowedTime borrowedTime = new BorrowedTime(charm);
+			CharmsApi.OnPlayerHurting(borrowedTime.OnHurting, Priority);
+		}
+
+		private void OnHurting(PlayerHurtContext context)
+		{
+			if (!charm.IsActive || context.Cancel || !context.IsLethal)
 			{
 				return;
 			}
 
-			// TODO: detect the moment the power should trigger, then:
-			// if (Charm.TryUse())
-			// {
-			//     ... apply the effect ...
-			//     Charm.LogDebug("Borrowed Time triggered");
-			// }
+			int before = context.Damage;
+			int surviveHp = UnityEngine.Mathf.RoundToInt(charm.SurviveHp.Value);
+			context.Damage = LastChance.SurvivableDamage(before, context.Health, surviveHp);
+			context.InvincibleSecondsAfter = charm.InvincibleSeconds.Value;
+
+			// No cooldown; the watch wears only now that it really saved the player.
+			charm.Wear(charm.WearPercent);
+			charm.LogDebug($"Borrowed Time: lethal hit of {before} at {context.Health} HP reduced to {context.Damage}, invincible {context.InvincibleSecondsAfter:0.##} s");
 		}
 	}
 }

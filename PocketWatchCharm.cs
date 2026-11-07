@@ -10,8 +10,14 @@ namespace CharmPocketWatch
 		internal PocketWatchCharm()
 			: base("PocketWatch", "Pocket Watch - Borrowed Time", defaultWearPercent: 100f, defaultCooldownSeconds: null, PrefabName)
 		{
-			// Extra host-synced numbers for this power go here, for example:
-			// Amount = AddSetting("Amount", 30f, 1f, 100f, "Description for the config file.");
+			InvincibleSeconds = AddSetting("InvincibleSeconds", 2f, 0f, 10f, "Seconds of invulnerability right after the watch saves you (0 = none).");
+			SurviveHp = AddSetting("SurviveHp", 1f, 1f, 10f, "Health points you are left with after a lethal hit (whole number, 1 to 10).");
 		}
+
+		/// <summary>Seconds of invulnerability after a save (0 to 10).</summary>
+		internal CharmSetting InvincibleSeconds { get; }
+
+		/// <summary>Health left after a lethal hit (1 to 10, whole number).</summary>
+		internal CharmSetting SurviveHp { get; }
 	}
 }
