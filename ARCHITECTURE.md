@@ -44,3 +44,12 @@ Provided by CharmCore: the `Debug.DebugMode` setting (off by default) places the
 - Instant kills that bypass `PlayerHealth.Hurt` (scripted explosion kill, arena kills) are not covered.
 - Unverified in game: see the QA battery.
 - Looked up by exact prefab name; a game update that renames the prefab needs a mod update.
+
+## Runtime hygiene
+
+- **References and level state:** nothing needed. `BorrowedTime` holds only the charm; no per-level state and no static game objects.
+- **Per-frame work:** the hurt handler exits first when the charm is inactive, the hit was cancelled or it is not lethal; it allocates nothing otherwise. There is no `Update`.
+- **Debug logs:** fixed. The `LogDebug` line in the hurt handler is now guarded with `if (charm.DebugMode)`.
+- **Changes to the game:** nothing needed. Only the damage and invulnerability time of the current hit are changed; nothing persists.
+- **Static game objects and Find calls:** none.
+- Known limit outside this mod: while the charm is active, CharmCore's `IsActive` and `CharmSetting.Value` build their host-setting key strings on each call; that is CharmCore's code and was left alone.

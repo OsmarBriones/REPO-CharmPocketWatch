@@ -41,7 +41,10 @@ namespace CharmPocketWatch
 
 			// No cooldown; the watch wears only now that it really saved the player.
 			charm.Wear(charm.WearPercent);
-			charm.LogDebug($"Borrowed Time: lethal hit of {before} at {context.Health} HP reduced to {context.Damage}, invincible {context.InvincibleSecondsAfter:0.##} s");
+			if (charm.DebugMode)
+			{
+				charm.LogDebug($"Borrowed Time: lethal hit of {before} at {context.Health} HP reduced to {context.Damage}, invincible {context.InvincibleSecondsAfter:0.##} s");
+			}
 		}
 	}
 }

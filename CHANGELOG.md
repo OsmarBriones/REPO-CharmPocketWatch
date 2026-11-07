@@ -5,3 +5,6 @@
 ### Added
 - Borrowed Time: a lethal hit leaves you with 1 HP (`SurviveHp`) and 2 seconds of invulnerability (`InvincibleSeconds`); the watch breaks after one save by default.
 - `Debug.DebugMode` (off by default): puts the Pocket Watch on the floor at the start of each level and writes detailed logs.
+
+### Changed
+- Runtime hygiene pass: guarded the debug log in the hurt handler; no per-level state, nothing else to change.
