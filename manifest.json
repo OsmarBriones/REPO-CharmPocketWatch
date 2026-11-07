@@ -1,0 +1,9 @@
+{
+    "name":  "CharmPocketWatch",
+    "version_number":  "1.0.0",
+    "website_url":  "https://github.com/OsmarBriones/REPO-CharmPocketWatch",
+    "description":  "Borrowed Time: a lethal hit leaves you with 1 HP and a moment of invulnerability. Needs Pockets and CharmCore. Everyone in the lobby needs it.",
+    "dependencies":  [
+                         "BepInEx-BepInExPack-5.4.2304"
+                     ]
+}
