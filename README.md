@@ -33,7 +33,7 @@ Settings are in `com.osmar.CharmPocketWatch.cfg` inside `BepInEx/config`, sectio
 - `InvincibleSeconds` (default `2`, 0 to 10): seconds of invulnerability right after a save.
 - `SurviveHp` (default `1`, 1 to 10): health you are left with after a lethal hit.
 
-Section `Debug`: `DebugMode` (default `false`) places a Pocket Watch on the floor in front of you when a level starts (host or singleplayer) and writes extra log lines. For testing.
+Section `Debug`: `DebugMode` (default `false`) places a Pocket Watch on the floor in front of you when a level starts (host or singleplayer) and writes extra log lines. For testing. `SpawnNow` (default `false`, needs `DebugMode`): set it to `true` while a level is running to place one right away; it switches itself back off.
 
 ## Good to know
 - The watch acts before the game's own small mercy rule, so a hit that would have killed you always uses it.
